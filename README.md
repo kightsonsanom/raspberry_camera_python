@@ -1,9 +1,44 @@
-# Smart-Security-Camera
-IoT Raspberry Pi security camera running open-cv for object detection. The camera will send an email with an image of any objects it detects. It also runs a server that provides a live video stream over the internet.
+# Raspberry Pi Camera
+IoT Raspberry Pi security camera running open-cv for object detection. If the camera detects an object it will send created picture to GoogleCloud and a notification to Android device through FirebaseCloudMessaging. It also runs a server that provides a live video stream over the internet.
 
-[Watch the original video here](https://youtu.be/Y2QFu-tTvTI)
+##GoogleCloudStorage
+
+There needs to be a bucket created inside GoogleCloudStorage. Since it requires debit card information, this functionality is turned off at the moment. 
+
+After creating a bucket we have to provide its id inside firebase.py file:
+```
+bucket = storage_client.get_bucket('<bucket_id>')
+```
+This will allow us to send pictures to that bucket and then download them from that bucket from Android client.
+
+##FirebaseCloudMessaging
+
+In order to notify Android client about object detection notification is send through FirebaseCloudMessaging API. To enable this functionality, API key has to be provided inside firebase.py file:
+
+```
+push_service = FCMNotification(api_key="<api_key>")
+```
+Api-key can be gotten from:  https://console.firebase.google.com/project/<project-name>/settings/cloudmessaging
+
+In order to send notification to Android client it is necessary to provide registration id for each client in firebase.py file:
+
+```
+registration_ids = ["<first_id>", "<second_id>",...]
+```
+These registration ids are obtained from the FirebaseCloudMessaging service when the app starts for the first time.
+Registration tokens may change when:
+1. The app deletes instance id
+2. The app is restored on a new device
+3. The user uninstalls/reinstalls the app
+4. The user clears app data
+
+Ideally Android client should send its registration id each time it is restored to the server but this functionality is not implemented. Registration ids need to be provide manually for each app.
+ 
 
 ## Setup
+
+This project is modified version of [tutorial](https://www.hackster.io/hackerhouse/smart-security-camera-90d7bd) which sends an email after detecting an object with the camera. Description of setting up the environment is taken directly from the tutorial.
+
 
 This project uses a Raspberry Pi Camera to stream video. Before running the code, make sure to configure the raspberry pi camera on your device.
 
@@ -47,41 +82,10 @@ and install the dependencies for the project
 pip install -r requirements.txt
 ```
 
-*Note: If you're running python3, you'll have to change the import statements at the top of the mail.py file*
-
-```
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-```
-*and change your print statements from quotes to parenthesis*
-
-```
-print "" => print()
-```
-
-## Customization
-
-To get emails when objects are detected, you'll need to make a couple modifications to the `mail.py` file.
-
-Open `mail.py` with vim `vim mail.py`, then press `i` to edit. Scroll down to the following section
-
-```
-# Email you want to send the update from (only works with gmail)
-fromEmail = 'myemail@gmail.com'
-fromEmailPassword = 'password1234'
-
-# Email you want to send the update to
-toEmail = 'anotheremail@gmail.com'
-```
-and replace with your own email/credentials. The `mail.py` file logs into a gmail SMTP server and sends an email with an image of the object detected by the security camera. 
-
-Press `esc` then `ZZ` to save and exit.
-
 You can also modify the `main.py` file to change some other properties.
 
 ```
-email_update_interval = 600 # sends an email only once in this time interval
+email_update_interval = 20 # sends photo to cloud only once in this time interval
 video_camera = VideoCamera(flip=True) # creates a camera object, flip vertically
 object_classifier = cv2.CascadeClassifier("models/fullbody_recognition_model.xml") # an opencv classifier
 ```
