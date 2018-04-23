@@ -33,6 +33,7 @@ registration_ids = ["<first_id>", "<second_id>",...]
 ```
 These registration ids are obtained from the FirebaseCloudMessaging service when the app starts for the first time.
 Registration tokens may change when:
+
 1. The app deletes instance id
 2. The app is restored on a new device
 3. The user uninstalls/reinstalls the app
