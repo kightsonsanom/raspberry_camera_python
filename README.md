@@ -7,7 +7,7 @@ IoT Raspberry Pi security camera running open-cv for object detection. If the ca
 
 
 
-##GoogleCloudStorage
+## GoogleCloudStorage
 
 There needs to be a bucket created inside GoogleCloudStorage. Since it requires debit card information, this functionality is turned off at the moment. 
 
@@ -17,7 +17,7 @@ bucket = storage_client.get_bucket('<bucket_id>')
 ```
 This will allow us to send pictures to that bucket and then download them from that bucket from Android client.
 
-##FirebaseCloudMessaging
+## FirebaseCloudMessaging
 
 In order to notify Android client about object detection notification is send through FirebaseCloudMessaging API. To enable this functionality, API key has to be provided inside firebase.py file:
 
